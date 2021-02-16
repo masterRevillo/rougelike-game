@@ -3,6 +3,7 @@ import tcod
 
 import copy
 
+import color
 import entity_factories
 from engine import Engine
 from procgen import generate_dungeon
@@ -12,7 +13,7 @@ def main() -> None:
     screen_height = 50
 
     map_width = 80
-    map_height = 45
+    map_height = 43
 
     room_max_size = 10
     room_min_size = 6
@@ -39,6 +40,7 @@ def main() -> None:
     )
     engine.update_fov()
 
+    engine.message_log.add_message("Welcome to the Jungle (you're gonna DIE)", color.welcome_text)
 
     with tcod.context.new_terminal(
         screen_width,
