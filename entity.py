@@ -49,7 +49,7 @@ class Entity:
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-        clone.game_map = game_map
+        clone.parent = game_map
         game_map.entities.add(clone)
         return clone
 
@@ -59,7 +59,7 @@ class Entity:
         self.y = y
         if game_map:
             if hasattr(self, "parent"):
-                if (self) is self.game_map:
+                if self.parent is self.game_map:
                     self.game_map.entities.remove(self)
             self.parent = game_map
             game_map.entities.add(self)
@@ -76,7 +76,7 @@ class Actor(Entity):
             y: int = 0,
             char: str = "?",
             color: Tuple[int, int, int] = (255, 255, 255),
-            name: str = "<Unnamed",
+            name: str = "<Unnamed>",
             ai_cls: Type[BaseAI],
             fighter: Fighter,
     ):
