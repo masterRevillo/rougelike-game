@@ -386,3 +386,37 @@ class SingleRangedAttackHandler(SelectIndexHandler):
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
+
+class AreaRangedAttackHandler(SelectIndexHandler):
+    """
+    handles targeting an area within a given radius. Any entities within the given radius
+    will be affected
+    """
+    def __init__(
+            self,
+            engine: Engine,
+            radius: int,
+            callback: Callable[[Tuple[int, int]], Optional[Action]],
+    ):
+        super().__init__(engine)
+        self.radius = radius
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        """highlight the tile under the cursor"""
+        super().on_render(console)
+
+        x, y = self.engine.mouse_location
+
+        # draw a  rectangle around the targeted area, so the player can see the affect range
+        console.draw_frame(
+            x=x - self.radius - 1,
+            y=y - self.radius - 1,
+            width=self.radius ** 2,
+            height=self.radius ** 2,
+            fg=color.red,
+            clear=False
+        )
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
