@@ -6,7 +6,7 @@ import actions
 import color
 import os
 import exceptions
-from entity import Item
+from entity import Item, Actor
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -134,7 +134,6 @@ class EventHandler(BaseEventHandler):
         self.engine.update_fov()
         return True
 
-
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
         if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
             self.engine.mouse_location = event.tile.x, event.tile.y
@@ -177,8 +176,19 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.K_SLASH:
             return LookHandler(self.engine)
 
-
         return action
+
+    def ev_mousebuttondown(
+        self, event: tcod.event.MouseButtonDown
+    ) -> Optional[ActionOrHandler]:
+        if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
+            for actor in self.engine.game_map.actors:
+                if self.engine.mouse_location == (actor.x, actor.y):
+                    self.engine.player.observing = actor
+                    return CharacterScreenEventHandler(self.engine)
+
+        return None
+
 
 class GameOverEventHandler(EventHandler):
     def on_quit(self) -> None:
@@ -579,23 +589,28 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             y=y,
             width=width,
             height=7,
-            title=self.TITLE,
+            title=self.TITLE + ": " +self.engine.player.observing.name,
             clear=True,
             fg=(255, 255, 255),
             bg=(0, 0, 0)
         )
         console.print(
-            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}"
+            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.observing.level.current_level}"
         )
         console.print(
-            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}"
+            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.observing.level.current_xp}"
         )
         console.print(
-            x=x + 1, y=y + 3, string=f"XP to next level: {self.engine.player.level.experience_to_next_level}"
+            x=x + 1, y=y + 3, string=f"XP to next level: {self.engine.player.observing.level.experience_to_next_level}"
         )
         console.print(
-            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}"
+            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.observing.fighter.power}"
         )
         console.print(
-            x=x + 1, y=y + 4, string=f"Defense: {self.engine.player.fighter.defense}"
+            x=x + 1, y=y + 4, string=f"Defense: {self.engine.player.observing.fighter.defense}"
         )
+    def ev_mousebuttondown(
+            self, event: tcod.event.MouseButtonDown
+    ) -> Optional[ActionOrHandler]:
+        self.engine.player.observing = self.engine.player
+        return super().on_exit()
