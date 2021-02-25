@@ -137,8 +137,8 @@ class FireballDamageConsumable(Consumable):
                 self.engine.message_log.add_message(
                     f"The {actor.name} is engulfed in a fiery explosion, taking {self.damage} damage"
                 )
-            actor.fighter.take_damage(self.damage)
-            target_hit = True
+                actor.fighter.take_damage(self.damage)
+                target_hit = True
 
         if not target_hit:
             raise Impossible("There are no targets in the radius")
