@@ -42,6 +42,18 @@ def new_game() -> Engine:
     engine.message_log.add_message(
         "Welcome to the Jungle (you're gonna DIE)", color.welcome_text
     )
+    dagger = copy.deepcopy(entity_factories.dagger)
+    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+
+    dagger.parent = player.inventory
+    leather_armor.parent = player.inventory
+
+    player.inventory.items.append(dagger)
+    player.equipment.toggle_equip(dagger, add_message=False)
+
+    player.inventory.items.append(leather_armor)
+    player.equipment.toggle_equip(leather_armor, False)
+
     return engine
 
 def load_game(filename: str) -> Engine:
