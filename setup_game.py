@@ -14,6 +14,8 @@ import input_handlers
 from game_map import GameWorld
 
 #Load background image and remove alpha channel
+from sound_manager import SoundManager
+
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
 def new_game() -> Engine:
@@ -39,6 +41,9 @@ def new_game() -> Engine:
     engine.game_world.generate_floor()
     engine.update_fov()
 
+    engine.sound_manager = SoundManager()
+    engine.sound_manager.playBgm("assets/audio/noitd.wav")
+
     engine.message_log.add_message(
         "Welcome to the Jungle (you're gonna DIE)", color.welcome_text
     )
@@ -61,6 +66,8 @@ def load_game(filename: str) -> Engine:
     with open(filename, "rb") as f:
         engine = pickle.loads(lzma.decompress(f.read()))
     assert isinstance(engine, Engine)
+    engine.sound_manager.cacheSfx()
+    engine.sound_manager.playBgm("assets/audio/noitd.wav")
     return engine
 
 class MainMenu(input_handlers.BaseEventHandler):

@@ -47,6 +47,7 @@ class HealingConsumable(Consumable):
                 color.health_recovered
             )
             self.consume()
+            self.engine.sound_manager.queueSfx("chew")
         else:
             raise Impossible("Your health is already full")
 

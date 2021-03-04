@@ -39,10 +39,10 @@ enemy_chance: Dict[int, List[Tuple[Entity, int]]] = {
 }
 
 def get_max_value_for_floor(
-        weigthed_chances_by_floor: List[Tuple[int, int]], floor: int
+        weighted_chances_by_floor: List[Tuple[int, int]], floor: int
 ) -> int:
     current_value = 0
-    for floor_minimum, value in weigthed_chances_by_floor:
+    for floor_minimum, value in weighted_chances_by_floor:
         if floor_minimum > floor:
             return current_value
         else:

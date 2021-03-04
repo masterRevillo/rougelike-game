@@ -1,5 +1,6 @@
 #!X:\Programs\Python3\python3.exe
 import tcod
+import pygame
 
 import copy
 import traceback

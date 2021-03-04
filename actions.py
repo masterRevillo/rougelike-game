@@ -70,6 +70,7 @@ class MeleeAction(ActionWithDirection):
         else:
             attack_color = color.enemy_atk
 
+        self.engine.sound_manager.queueSfx("pling")
         if damage > 0:
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points", attack_color
@@ -93,6 +94,7 @@ class MovementAction(ActionWithDirection):
             #destination blocked by entity, prevent movement
             raise exceptions.Impossible("That way is blocked")
 
+        self.engine.sound_manager.queueSfx("scoot")
         self.entity.move(self.dx, self.dy)
 
 class BumpAction(ActionWithDirection):
@@ -143,6 +145,7 @@ class PickupAction(Action):
                 inventory.items.append(item)
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}")
+                self.engine.sound_manager.queueSfx("pick")
                 return
 
         raise exceptions.Impossible("There is nothing here to pick up")

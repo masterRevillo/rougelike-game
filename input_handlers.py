@@ -106,11 +106,13 @@ class EventHandler(BaseEventHandler):
         game handler (unless the player is dead)
         """
         action_or_state = self.dispatch(event)
+        self.engine.sound_manager.playSfxQueue()
         if isinstance(action_or_state, BaseEventHandler):
             return action_or_state
         if self.handle_action(action_or_state):
             #a valid action was performed
             if not self.engine.player.is_alive:
+                self.engine.sound_manager.queueSfx("moan")
                 return GameOverEventHandler(self.engine)
             elif self.engine.player.level.requires_level_up:
                 return LevelUpEventHandler(self.engine)
