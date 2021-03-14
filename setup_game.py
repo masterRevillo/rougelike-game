@@ -18,7 +18,7 @@ from sound_manager import SoundManager
 
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
-def new_game() -> Engine:
+def new_game(type: int) -> Engine:
     """return a brand new game session as an engine instance"""
     map_width = 80
     map_height = 43
@@ -38,7 +38,10 @@ def new_game() -> Engine:
         map_height=map_height,
         engine=engine
     )
-    engine.game_world.generate_floor()
+    if (type == 1):
+        engine.game_world.generate_floor()
+    elif (type == 2):
+        engine.game_world.generate_overworld()
     engine.update_fov()
 
     engine.sound_manager = SoundManager()
@@ -119,6 +122,7 @@ class MainMenu(input_handlers.BaseEventHandler):
                 traceback.print_exc()
                 return input_handlers.PopupMessage(self, f"Failed to load save:\n{e}")
         elif event.sym == tcod.event.K_n:
-            return input_handlers.MainGameEventHandler(new_game())
-
+            return input_handlers.MainGameEventHandler(new_game(1))
+        elif event.sym == tcod.event.K_w:
+            return input_handlers.MainGameEventHandler(new_game(2))
         return None

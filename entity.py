@@ -33,7 +33,7 @@ class Entity:
             y: int = 0,
             char: str = "?",
             color: Tuple[int, int, int] = (255, 255, 255),
-            name: str = "<Unnamed",
+            name: str = "<Unnamed>",
             blocks_movement: bool = False,
             render_order: RenderOrder = RenderOrder.CORPSE,
     ):

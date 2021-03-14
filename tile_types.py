@@ -46,6 +46,13 @@ wall = new_tile(
     light=(ord(" "), (255, 255, 255), (160, 110, 50))
 )
 
+water = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (5, 5, 150)),
+    light=(ord(" "), (255, 255, 255), (5, 5, 230))
+)
+
 down_stairs = new_tile(
     walkable=True,
     transparent=True,

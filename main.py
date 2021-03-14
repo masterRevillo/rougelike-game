@@ -1,6 +1,9 @@
 #!X:\Programs\Python3\python3.exe
 import tcod
 import pygame
+#disable python event handling
+pygame.display.init()
+pygame.display.quit()
 
 import copy
 import traceback

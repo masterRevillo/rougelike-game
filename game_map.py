@@ -10,24 +10,17 @@ if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
 
-
 class GameMap:
     def __init__(
             self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
     ):
+        self.visible = []
+        self.explored = []
+        self.tiles = []
+
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
-
-        self.visible = np.full(
-            (width, height), fill_value=False, order="F"
-        ) # tiles player can currently see
-        self.explored = np.full(
-            (width, height), fill_value=False, order="F"
-        ) # tiles player has seen before
-
-        self.downstairs_location = (0, 0)
 
     @property
     def game_map(self) -> GameMap:
@@ -93,6 +86,39 @@ class GameMap:
                     x=entity.x, y=entity.y, string=entity.char, fg= entity.color
                 )
 
+class DungeonGameMap(GameMap):
+    def __init__(
+            self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+    ):
+        super().__init__(engine, width, height, entities)
+        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
+
+        self.visible = np.full(
+            (width, height), fill_value=False, order="F"
+        ) # tiles player can currently see
+        self.explored = np.full(
+            (width, height), fill_value=False, order="F"
+        ) # tiles player has seen before
+
+        self.downstairs_location = (0, 0)
+
+class WorldGameMap(DungeonGameMap):
+    def __init__(
+            self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+    ):
+        super().__init__(engine, width, height, entities)
+        self.tiles = np.full((width, height), fill_value=tile_types.water, order="F")
+
+        self.visible = np.full(
+            (width, height), fill_value=False, order="F"
+        )  # tiles player can currently see
+        self.explored = np.full(
+            (width, height), fill_value=True, order="F"
+        )  # tiles player has seen before
+
+        self.downstairs_location = (0, 0)
+
+
 class GameWorld:
     """
     Holds the settings for the GameMap, and generates new maps when moving down stairs
@@ -118,7 +144,7 @@ class GameWorld:
         self.current_floor = current_floor
 
     def generate_floor(self) -> None:
-        from procgen import generate_dungeon
+        from dungeon_procgen import generate_dungeon
 
         self.current_floor += 1
 
@@ -129,4 +155,13 @@ class GameWorld:
             map_width=self.map_width,
             map_height=self.map_height,
             engine=self.engine
+        )
+
+    def generate_overworld(self) -> None:
+        from world_procgen import generate_world
+
+        self.engine.game_map = generate_world(
+            world_width=self.map_width,
+            world_height=self.map_height,
+            engine=self.engine,
         )

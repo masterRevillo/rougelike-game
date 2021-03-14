@@ -1,3 +1,4 @@
 tcod>=11.14
 numpy>=1.18
 pygame>=1.9.6
+perlin-noise>=1.7
