@@ -46,16 +46,37 @@ wall = new_tile(
     light=(ord(" "), (255, 255, 255), (160, 110, 50))
 )
 
-water = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(ord(" "), (255, 255, 255), (5, 5, 150)),
-    light=(ord(" "), (255, 255, 255), (5, 5, 230))
-)
-
 down_stairs = new_tile(
     walkable=True,
     transparent=True,
     dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
     light=(ord(">"), (255, 255, 255), (200, 180, 50))
+)
+
+water = new_tile(
+    walkable=False,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (5, 5, 150)),
+    light=(ord(" "), (255, 255, 255), (5, 5, 230))
+)
+
+sand = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (130, 105, 20)),
+    light=(ord(" "), (255, 255, 255), (230, 205, 48))
+)
+
+grass = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (5, 100, 15)),
+    light=(ord(" "), (255, 255, 255), (5, 230, 15))
+)
+
+brush = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (20, 80, 7)),
+    light=(ord(" "), (255, 255, 255), (30, 130, 7))
 )
