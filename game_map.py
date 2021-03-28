@@ -1,14 +1,35 @@
 from __future__ import annotations
 
-from typing import Iterable, TYPE_CHECKING, Optional, Iterator
+from typing import Iterable, TYPE_CHECKING, Optional, Iterator, Tuple
 import numpy as np
 from tcod import Console
+
+from camera import Camera
 from entity import Actor, Item
 import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
+
+class Chunk:
+    def __init__(
+            self, engine: Engine, chunk_x: int, chunk_y: int, entities: Iterable[Entity] = ()
+    ):
+        self.size = 20
+        self.visible = []
+        self.explored = []
+        self.tiles = []
+        self.chunk_x, self.chunk_y = chunk_x, chunk_y
+
+        self.engine = engine
+        self.entities = set(entities)
+
+    def coords_in_chunk(self, entity: Entity) -> Tuple[int, int]:
+        return entity.x - self.size*self.chunk_x, entity.y - self.size*self.chunk_y
+
+    def distance_from_entity(self, entity: Entity) -> Tuple[int, int]:
+        return abs(self.size*self.chunk_x - entity.x), abs(self.size*self.chunk_y - entity.y)
 
 class GameMap:
     def __init__(
@@ -61,7 +82,7 @@ class GameMap:
         """Return True if x and y are inside of the bounds of this map"""
         return 0 <= x < self.width and 0 <= y < self.height
 
-    def render(self, console: Console) -> None:
+    def render(self, console: Console, camera: Camera) -> None:
         """
         renders the map
         If a tile is in the visible array, draw it with its "light" colors
@@ -69,11 +90,26 @@ class GameMap:
         Default to SHROUD, meaning its not visible AND not explored
         """
 
-        console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
+        console.tiles_rgb[0 : camera.width, 0 : camera.height] = np.full(
+            (camera.width, camera.height), fill_value=tile_types.SHROUD2, order="F"
+        )
+
+        to_print = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD
         )
+
+        for y in range(self.height):
+            for x in range(self.width):
+                x_in_camera, y_in_camera = camera.apply(x, y)
+                if camera.in_bounds(x_in_camera, y_in_camera) and self.in_bounds(x, y):
+                    console.tiles_rgb[x_in_camera, y_in_camera] = to_print[x][y]
+
+        # np.roll(to_print, camera.y, axis=0)
+        # np.roll(to_print, camera.x, axis=1)
+        #
+        # console.tiles_rgb[0 : self.width, 0 : self.height] = to_print
 
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
@@ -83,7 +119,7 @@ class GameMap:
             # only print entities that are in the FOV
             if self.visible[entity.x, entity.y]:
                 console.print(
-                    x=entity.x, y=entity.y, string=entity.char, fg= entity.color
+                    x=entity.x + camera.x, y=entity.y + camera.y, string=entity.char, fg= entity.color
                 )
 
 class DungeonGameMap(GameMap):
@@ -117,6 +153,15 @@ class WorldGameMap(DungeonGameMap):
         )  # tiles player has seen before
 
         self.downstairs_location = (0, 0)
+        self.chunks = {}
+
+    def get_chunk(self, coordinates: Tuple[int, int]) -> Chunk:
+        chunk = self.chunks.get(coordinates)
+        if chunk:
+            return chunk
+        else:
+            pass
+#             genereate it
 
 
 class GameWorld:

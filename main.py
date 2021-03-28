@@ -12,6 +12,7 @@ import color
 import setup_game
 import exceptions
 import input_handlers
+from camera import Camera
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
     """if the current event handler has an active Engine, save it"""
@@ -24,7 +25,7 @@ def main() -> None:
     screen_height = 50
 
     tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+        "Potash_10x10.png", 16, 16, tcod.tileset.CHARMAP_CP437
     )
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()

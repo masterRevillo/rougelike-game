@@ -31,6 +31,7 @@ def new_tile(
 
 # SHROUD represents unexplored, unseen tiles
 SHROUD = np.array((ord(" "), (255, 255, 255), (5, 5, 5)), dtype=graphic_dt)
+SHROUD2 = np.array((ord(" "), (255, 255, 255), (5, 100, 5)), dtype=graphic_dt)
 
 floor = new_tile(
     walkable=True,
@@ -63,7 +64,7 @@ water = new_tile(
 sand = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (130, 105, 20)),
+    dark=(ord(" "), (255, 255, 255), (100, 105, 20)),
     light=(ord(" "), (255, 255, 255), (230, 205, 48))
 )
 

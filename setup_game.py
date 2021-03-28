@@ -8,6 +8,7 @@ import traceback
 from typing import Optional
 import tcod
 import color
+from camera import Camera
 from engine import Engine
 import entity_factories
 import input_handlers
@@ -20,15 +21,19 @@ background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
 def new_game(type: int) -> Engine:
     """return a brand new game session as an engine instance"""
-    map_width = 80
-    map_height = 43
+    map_width = 100
+    map_height = 100
+
+    screen_width = 80
+    screen_height = 50
 
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
 
     player = copy.deepcopy(entity_factories.player)
-    engine = Engine(player=player)
+    camera = Camera(x=0, y=0, width=screen_width, height=screen_height, map_width=map_width, map_height=map_height)
+    engine = Engine(player=player, camera=camera)
 
     engine.game_world = GameWorld(
         max_rooms=max_rooms,
@@ -45,7 +50,7 @@ def new_game(type: int) -> Engine:
     engine.update_fov()
 
     engine.sound_manager = SoundManager()
-    engine.sound_manager.playBgm("assets/audio/noitd.wav")
+    # engine.sound_manager.playBgm("assets/audio/noitd.wav")
 
     engine.message_log.add_message(
         "Welcome to the Jungle (you're gonna DIE)", color.welcome_text
@@ -70,7 +75,7 @@ def load_game(filename: str) -> Engine:
         engine = pickle.loads(lzma.decompress(f.read()))
     assert isinstance(engine, Engine)
     engine.sound_manager.cacheSfx()
-    engine.sound_manager.playBgm("assets/audio/noitd.wav")
+    # engine.sound_manager.playBgm("assets/audio/noitd.wav")
     return engine
 
 class MainMenu(input_handlers.BaseEventHandler):

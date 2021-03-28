@@ -96,6 +96,8 @@ class MovementAction(ActionWithDirection):
 
         self.engine.sound_manager.queueSfx("scoot")
         self.entity.move(self.dx, self.dy)
+        if self.entity is self.engine.player:
+            self.engine.camera.update(self.entity)
 
 class BumpAction(ActionWithDirection):
     def perform(self) -> None:

@@ -7,6 +7,7 @@ from tcod import Console
 from tcod.map import compute_fov
 
 import exceptions
+from camera import Camera
 from message_log import MessageLog
 import render_functions
 from sound_manager import SoundManager
@@ -15,16 +16,16 @@ if TYPE_CHECKING:
     from entity import Actor
     from game_map import GameMap, GameWorld
 
-
 class Engine:
     game_map: GameMap
     game_world: GameWorld
     sound_manager: SoundManager
 
-    def __init__(self, player: Actor):
+    def __init__(self, player: Actor, camera: Camera):
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
+        self.camera = camera
 
     def handle_enemy_turns(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
@@ -45,7 +46,8 @@ class Engine:
         self.game_map.explored |= self.game_map.visible
 
     def render(self, console: Console) -> None:
-        self.game_map.render(console)
+        self.camera.update(self.player)
+        self.game_map.render(console, self.camera)
 
         self.message_log.render(console=console, x=21, y=45, width=40, height=5)
 
@@ -67,6 +69,12 @@ class Engine:
             x=21,
             y=44,
             engine=self
+        )
+
+        render_functions.render_player_coords(
+            console=console,
+            player=self.player,
+            location=(0, 48)
         )
 
 

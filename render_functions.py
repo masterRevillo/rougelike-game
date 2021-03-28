@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple
 
 import color
+from entity import Entity
 
 if TYPE_CHECKING:
     from tcod import Console
@@ -53,3 +54,10 @@ def render_dungeon_level(
     x, y = location
 
     console.print(x=x, y=y, string=f"Dungeon level: {dungeon_level}")
+
+def render_player_coords(
+        console: Console, player: Entity, location: Tuple[int, int]
+):
+    x, y = location
+
+    console.print(x=x, y=y, string=f"Coords: {player.x},{player.y}")
